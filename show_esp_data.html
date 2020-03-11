@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        .esp_data {
+            font-size: 2em;
+        }
+        .data_area {
+            float: left;
+            width: auto;
+            height: auto;
+            border: 10px outset;
+            box-shadow: 10px 10px 5px #888888;
+            background-color: #F0F0F0;
+            padding: 5px;
+            margin: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="esp_data" class="esp_data">P1</div>
+<script>
+    let p1 = document.querySelector("p1");
+    requestUrl = "esp_data.json";
+    request = new XMLHttpRequest();
+    request.open("GET", requestUrl, true);
+    request.requestType = "text";
+
+    function run()
+    {
+        request.open("GET", requestUrl, true);
+        request.requestType = "text";
+        request.send();
+        setTimeout(function(){run()}, 600); /* recursive run (ms), because the delay of network, 600ms just work as 1000ms */
+        // console.log("run...");
+    }
+
+    request.onreadystatechange  = function() {
+        /* make sure the respone state is on ready */
+        if (request.readyState == 4 && request.status == 200) {
+            let espJsonData = request.response;
+            // espJsonStr = JSON.parse(espJsonData);
+            let espJsonStr = eval('('+espJsonData+')');
+            // let espJsonStr = espJsonData;
+            // console.log(espJsonData);
+            showEspData(espJsonStr);
+        }
+    };
+    
+    function showEspData(jsonObject)
+    {
+        let p = document.getElementById("esp_data");
+        p.innerHTML = "";
+        // console.log(jsonObject.length);
+        for (key in jsonObject) {
+            p.innerHTML += "<div class=\"data_area\">" + key + ":" + jsonObject[key] + "</div>";
+        }
+    }
+
+    run(); /* manually run once to start up */
+</script>
+</body>
+</html>
